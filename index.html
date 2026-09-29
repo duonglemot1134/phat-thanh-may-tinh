@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#166534"><title>PHÁT THÀNH | Markup & Gross Margin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f5f2;color:#17231a;font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:14px}.app{max-width:560px;margin:auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 6px 24px #102b1618}.hero{background:#166534;color:white;padding:22px}.hero b{font-size:12px;letter-spacing:1.5px}.hero h1{font-size:22px;margin:8px 0}.hero p{margin:0;font-size:14px;opacity:.9}.content{padding:18px}.field{margin-bottom:20px}label{display:block;font-weight:650;font-size:14px;margin-bottom:8px}input[type=number]{width:100%;min-height:52px;border:1px solid #c9d5cc;border-radius:12px;padding:12px 14px;font-size:20px;color:#17231a;background:#fff}input[type=range]{display:block;width:100%;height:42px;margin:5px 0;accent-color:#16803b;touch-action:pan-x}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.row .pct{color:#16803b;font-size:22px;font-weight:800}.discount-row{display:grid;grid-template-columns:minmax(0,1fr) 94px;gap:12px;align-items:center}.discount-row input[type=number]{text-align:center;padding:8px 3px}.ticks{display:flex;justify-content:space-between;color:#758178;font-size:11px}.results{border-top:1px solid #e3e9e4;padding-top:18px}.caption{font-size:13px;color:#68766c}.cost{font-size:28px;font-weight:800;margin:5px 0 16px;overflow-wrap:anywhere}.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{padding:14px;border-radius:13px;background:#f0f4f0;min-width:0}.tile.green{background:#e7f5e9}.tile.wide{grid-column:1/-1}.value{font-size:21px;font-weight:800;margin-top:7px;overflow-wrap:anywhere}.green .value{color:#147334}.negative{color:#b42318!important}.buttons{display:flex;gap:10px;margin-top:18px}.buttons button{flex:1;border:0;border-radius:12px;min-height:50px;background:#eaf2eb;color:#166534;font-size:15px;font-weight:750}.buttons .main{background:#16803b;color:white}.tip{margin-top:16px;font-size:12px;line-height:1.55;color:#718076}.status{display:none;background:#e7f5e9;color:#166534;border-radius:10px;padding:10px;margin-bottom:15px;font-size:13px}.status.show{display:block}@media(prefers-color-scheme:dark){body{background:#101612;color:#eef5ef}.app{background:#1b241e}.content{background:#1b241e}input[type=number]{background:#111914;color:#eef5ef;border-color:#39473d}.tile{background:#263029}.tile.green{background:#183b25}.results{border-color:#344038}.caption,.ticks,.tip{color:#a6b3a9}.buttons button{background:#293a2e;color:#bce8c6}.buttons .main{background:#238344;color:white}}
+</style></head><body><main class="app"><header class="hero"><b>PHÁT THÀNH</b><h1>Máy tính Markup & Gross Margin</h1><p>Nhập số liệu để tính giá nhập và biên lợi nhuận.</p></header><section class="content"><div id="status" class="status">Máy tính đã sẵn sàng.</div>
+<div class="field"><label for="list">Giá niêm yết làm căn cứ chiết khấu (VNĐ)</label><input id="list" type="number" inputmode="decimal" min="0" step="1000" value="350000"></div>
+<div class="field"><div class="row"><label for="discount">Chiết khấu nhà cung cấp</label><output id="pct" class="pct">50%</output></div><div class="discount-row"><input id="range" type="range" min="0" max="80" step="1" value="50" aria-label="Thanh kéo chiết khấu"><input id="discount" type="number" inputmode="decimal" min="0" max="80" step="1" value="50" aria-label="Nhập phần trăm chiết khấu"></div><div class="tip">Bạn có thể kéo thanh hoặc nhập tỷ lệ từ 0 đến 80%.</div><div class="ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span></div></div>
+<div class="field"><label for="sale">Giá bán thực tế dự kiến (VNĐ)</label><input id="sale" type="number" inputmode="decimal" min="0" step="1000" value="350000"></div>
+<div class="results"><div class="caption">Giá nhập sau chiết khấu</div><div class="cost" id="cost">175.000 ₫</div><div class="tiles"><div class="tile"><div class="caption">Lãi gộp</div><div class="value" id="profit">175.000 ₫</div></div><div class="tile green"><div class="caption">Gross Margin</div><div class="value" id="margin">50,00%</div></div><div class="tile wide"><div class="caption">Markup trên giá nhập</div><div class="value" id="markup">100,00%</div></div></div></div>
+<div class="buttons"><button id="reset" class="main" type="button">Đặt lại</button><button id="copy" type="button">Sao chép kết quả</button></div><p class="tip">Lãi gộp chưa trừ vận chuyển, khuyến mãi, phí bán hàng, bảo hành và chi phí vận hành. Hãy so sánh giá nhập và giá bán trên cùng cơ sở VAT.</p></section></main>
+<script>
+(function(){
+const $=id=>document.getElementById(id),list=$('list'),range=$('range'),discount=$('discount'),sale=$('sale');
+const money=n=>Number.isFinite(n)?Math.round(n).toLocaleString('vi-VN')+' ₫':'—';
+const pct=n=>Number.isFinite(n)?n.toLocaleString('vi-VN',{minimumFractionDigits:2,maximumFractionDigits:2})+'%':'—';
+function calc(){
+ let lp=Number(list.value),d=Number(discount.value),sp=Number(sale.value);
+ if(list.value===''||!Number.isFinite(lp)||lp<0)lp=0;
+ if(discount.value===''||!Number.isFinite(d))d=0;
+ d=Math.max(0,Math.min(80,d));
+ if(sale.value===''||!Number.isFinite(sp)||sp<0)sp=0;
+ const c=lp*(1-d/100),p=sp-c,m=sp>0?p/sp*100:NaN,k=c>0?p/c*100:NaN;
+ $('pct').textContent=d+'%';$('cost').textContent=money(c);$('profit').textContent=money(p);$('margin').textContent=pct(m);$('markup').textContent=pct(k);
+ ['profit','margin','markup'].forEach(id=>$(id).classList.toggle('negative',p<0));
+}
+function setDiscount(v){let n=Number(v);if(!Number.isFinite(n))return;n=Math.max(0,Math.min(80,n));range.value=String(n);discount.value=String(n);calc();}
+range.addEventListener('input',()=>setDiscount(range.value));
+range.addEventListener('change',()=>setDiscount(range.value));
+discount.addEventListener('input',()=>{if(discount.value!=='')setDiscount(discount.value);else{$('pct').textContent='—';}});
+discount.addEventListener('change',()=>setDiscount(discount.value===''?0:discount.value));
+['input','change'].forEach(ev=>{list.addEventListener(ev,calc);sale.addEventListener(ev,calc);});
+$('reset').addEventListener('click',()=>{list.value='350000';sale.value='350000';setDiscount(50);});
+$('copy').addEventListener('click',()=>{calc();const text='PHÁT THÀNH – Markup & Gross Margin\nGiá niêm yết: '+money(Number(list.value))+'\nChiết khấu: '+discount.value+'%\nGiá nhập: '+$('cost').textContent+'\nGiá bán: '+money(Number(sale.value))+'\nLãi gộp: '+$('profit').textContent+'\nGross Margin: '+$('margin').textContent+'\nMarkup: '+$('markup').textContent;const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');$('copy').textContent='Đã sao chép';}catch(e){$('copy').textContent='Không sao chép được';}ta.remove();});
+calc();$('status').classList.add('show');
+})();
+</script></body></html>
